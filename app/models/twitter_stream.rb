@@ -3,7 +3,7 @@ class TwitterStream
     EM.run do
       TweetStream::Client.new.track(search_term) do |status|
         p status.text
-        deliverator.call(status)
+        p deliverator.call(status.text)
       end
     end
   end

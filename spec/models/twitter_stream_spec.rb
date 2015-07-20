@@ -15,5 +15,6 @@ RSpec.describe TwitterStream do
 
       expect(client).to have_received(:track).with('hello')
     end
+
   end
 end

@@ -1,6 +1,6 @@
 $(function() {
     myApp = {};
-    myApp.successCallback = function (data) { console.log('hi'); };
+    myApp.successCallback = function (data) { console.log('successful ajax call'); };
     myApp.ajaxParams = {
         success: myApp.successCallback
     };
