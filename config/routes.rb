@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   root "sentiments#index"
-  get 'sentiments' => 'sentiments#stream'
+  get 'sentiments/:search_term' => 'sentiments#stream'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

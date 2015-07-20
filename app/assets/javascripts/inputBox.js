@@ -7,8 +7,17 @@ $(function() {
     myApp.executeSubmission = function (e) {
         e.preventDefault();
         var val = $('input').val();
-        myApp.ajaxParams.url = '/sentiments/' + val;
-        $.ajax(myApp.ajaxParams);
+
+        if(val) {
+            myApp.ajaxParams.url = '/sentiments/' + val;
+            $.ajax(myApp.ajaxParams);
+        }
+        else {
+            console.log('please enter input');
+        }
+
     };
+
+
     $('#query').submit(myApp.executeSubmission);
 });

@@ -9,10 +9,9 @@ RSpec.describe SentimentsController, type: :controller do
     end
   end
 
-  describe 'stream' do
+  describe 'GET stream' do
     it 'calls #start_stream' do
       allow(TwitterStream).to receive(:start_stream)
-
       get :stream, search_term: 'hello'
       expect(TwitterStream).to have_received(:start_stream).with('hello')
     end

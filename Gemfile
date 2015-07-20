@@ -11,6 +11,7 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 gem 'tweetstream'
 gem 'figaro'
+gem 'sentimental'
 
 group :development, :test do
   # Access an IRB console on exception pages or by using <%= console %> in views

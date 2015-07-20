@@ -35,6 +35,13 @@ describe('index page', function() {
             expect($.ajax.calls.first().args[0].url).toBe('/sentiments/' + value);
         });
 
+        it("wont send a request if the input box is empty",function() {
+            spyOn($, 'ajax');
+            input.val('');
+            myApp.executeSubmission({preventDefault: $.noop});
+            expect($.ajax).not.toHaveBeenCalled();
+        });
+
     });
 
 });
