@@ -59,18 +59,8 @@ describe('index page', function() {
         it('changes the score div', function () {
             expect($('.score').text()).toBe('');
             myApp.newTweet(eventData);
-            expect($('.score').text()).toBe('2.5');
+            expect($('.score').text()).toBe('250.0000');
         });
-
-        //it('listens to the new_tweet event', function() {
-        //    spyOn(myApp, 'renderScore');
-        //    spyOn(myApp, 'totalScore').and.returnValue(20);
-        //    spyOn(myApp, 'tweetCount').and.returnValue(4);
-        //    var score = $(".score");
-        //    myApp.eventSource.trigger("new_tweet");
-        //    expect(myApp.renderScore).toHaveBeenCalled();
-        //    expect(score.text()).toEqual(5);
-        //});
 
 
     });
