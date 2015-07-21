@@ -1,14 +1,14 @@
 var fixture, input, button, request;
 describe('index page', function() {
     beforeEach(function() {
-        jasmine.Ajax.install();
-        fixture = setFixtures('<input type="text" /> <button class="submit">submit</button>');
+        fixture = setFixtures('<form id="query">' +
+                                '<input type="text"/>' +
+                                '<button>Submit</button>' +
+                                '</form>' +
+                                '<div class="score"></div>');
         input = fixture.find('input');
         button = fixture.find('button');
-    });
-
-    afterEach(function() {
-        jasmine.Ajax.uninstall();
+        spyOn(myApp, 'eventSource').and.returnValue({addEventListener: $.noop});
     });
 
     describe('submit button', function() {
@@ -17,30 +17,61 @@ describe('index page', function() {
             input.val(value);
         });
 
-        it("onclick sends a request", function() {
-            spyOn($, 'ajax');
-            myApp.executeSubmission({preventDefault: $.noop});
-            expect($.ajax.calls.first().args[0].success).toBe(myApp.successCallback);
-        });
-
         it("prevents default activity cascade", function () {
             var eventSpy = {preventDefault: jasmine.createSpy('event')};
             myApp.executeSubmission(eventSpy);
             expect(eventSpy.preventDefault).toHaveBeenCalled();
         });
 
-        it("sends a request to the correct url", function() {
-            spyOn($, 'ajax');
-            myApp.executeSubmission({preventDefault: $.noop});
-            expect($.ajax.calls.first().args[0].url).toBe('/sentiments/' + value);
-        });
-
-        it("wont send a request if the input box is empty",function() {
-            spyOn($, 'ajax');
+        it("wont send a request if the input box is empty", function() {
             input.val('');
             myApp.executeSubmission({preventDefault: $.noop});
-            expect($.ajax).not.toHaveBeenCalled();
+            expect(myApp.eventSource).not.toHaveBeenCalled();
         });
+
+        it("makes an event source to the proper endpoint", function() {
+            myApp.executeSubmission({preventDefault: $.noop});
+            expect(myApp.eventSource).toHaveBeenCalledWith('/sentiments/' + value);
+        })
+
+    });
+
+    describe('new tweet event', function() {
+        const eventData = {data: "{\"score\": 2.5}"};
+
+        afterEach(function(){
+            myApp.tweetCount = 0;
+            myApp.totalScore = 0;
+        });
+
+        it('increases tweet count', function () {
+            expect(myApp.tweetCount).toBe(0);
+            myApp.newTweet(eventData);
+            expect(myApp.tweetCount).toBe(1);
+        });
+
+        it('changes the total score', function () {
+            expect(myApp.totalScore).toBe(0);
+            myApp.newTweet(eventData);
+            expect(myApp.totalScore).toBe(2.5);
+        });
+
+        it('changes the score div', function () {
+            expect($('.score').text()).toBe('');
+            myApp.newTweet(eventData);
+            expect($('.score').text()).toBe('2.5');
+        });
+
+        //it('listens to the new_tweet event', function() {
+        //    spyOn(myApp, 'renderScore');
+        //    spyOn(myApp, 'totalScore').and.returnValue(20);
+        //    spyOn(myApp, 'tweetCount').and.returnValue(4);
+        //    var score = $(".score");
+        //    myApp.eventSource.trigger("new_tweet");
+        //    expect(myApp.renderScore).toHaveBeenCalled();
+        //    expect(score.text()).toEqual(5);
+        //});
+
 
     });
 
