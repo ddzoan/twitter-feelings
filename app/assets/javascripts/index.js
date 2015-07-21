@@ -5,12 +5,23 @@ myApp.successCallback = function (data) {
 myApp.eventSource = function(path) {
     return new EventSource(path);
 };
+myApp.addTweet = function(tweetData) {
+    if($('.tweet-stream li').length === 10) {
+        $('.tweet-stream li:last-child').remove();
+    }
+    $('.tweet-stream').prepend($('<li class="tweet">' + tweetData.text + '</li>'));
+};
+myApp.updateScore = function(tweetData) {
+    myApp.tweetCount += 1;
+    myApp.totalScore += tweetData.score;
+    $('.score').text(((myApp.totalScore / myApp.tweetCount)*100).toFixed(4));
+};
 myApp.tweetCount = 0;
 myApp.totalScore = 0;
 myApp.newTweet = function(event) {
-    myApp.tweetCount += 1;
-    myApp.totalScore += JSON.parse(event.data).score;
-    $('.score').text(((myApp.totalScore / myApp.tweetCount)*100).toFixed(4));
+    var tweetData = JSON.parse(event.data);
+    myApp.updateScore(tweetData);
+    myApp.addTweet(tweetData);
 };
 myApp.ajaxParams = {
     success: myApp.successCallback

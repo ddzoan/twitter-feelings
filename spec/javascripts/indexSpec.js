@@ -2,10 +2,11 @@ var fixture, input, button, request;
 describe('index page', function() {
     beforeEach(function() {
         fixture = setFixtures('<form id="query">' +
-                                '<input type="text"/>' +
-                                '<button>Submit</button>' +
+                                '<input type="text" class="search"/>' +
+                                '<button class="submit">Submit</button>' +
                                 '</form>' +
-                                '<div class="score"></div>');
+                                '<div class="score"></div>' +
+                                '<ul class="tweet-stream"></ul>');
         input = fixture.find('input');
         button = fixture.find('button');
         spyOn(myApp, 'eventSource').and.returnValue({addEventListener: $.noop});
@@ -37,7 +38,7 @@ describe('index page', function() {
     });
 
     describe('new tweet event', function() {
-        const eventData = {data: "{\"score\": 2.5}"};
+        const eventData = {data: "{\"score\": 2.5, \"text\": \"Love it\"}"};
 
         afterEach(function(){
             myApp.tweetCount = 0;
@@ -61,6 +62,28 @@ describe('index page', function() {
             myApp.newTweet(eventData);
             expect($('.score').text()).toBe('250.0000');
         });
+
+        describe('tweetstream', function() {
+
+            it('will add the tweet text to the tweetstream', function() {
+                expect($('.tweet-stream li').length).toBe(0);
+                myApp.newTweet(eventData);
+                expect($('.tweet-stream li').length).toBe(1);
+                myApp.newTweet(eventData);
+                expect($('.tweet-stream li').length).toBe(2);
+            });
+
+            it('only shows a max of 10 tweets', function() {
+                for (var i=0; i<10; i++) {
+                    myApp.newTweet(eventData);
+                }
+                expect($('.tweet-stream li').length).toBe(10);
+                myApp.newTweet(eventData);
+                expect($('.tweet-stream li').length).toBe(10);
+            });
+        });
+
+
 
 
     });
