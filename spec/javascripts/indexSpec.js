@@ -82,10 +82,6 @@ describe('index page', function() {
                 expect($('.tweet-stream li').length).toBe(10);
             });
         });
-
-
-
-
     });
 
 });

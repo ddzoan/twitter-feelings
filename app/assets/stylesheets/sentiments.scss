@@ -26,3 +26,17 @@
   font-size: 30px;
   text-align: center;
 }
+
+.tweet-stream {
+  position: absolute;
+  width: 400px;
+  right: 20px;
+
+  list-style-type: none;
+  
+  li {
+    border: 1px solid lightgray;
+    height: 70px;
+    padding: 10px;
+  }
+}
