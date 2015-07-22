@@ -6,10 +6,10 @@ describe('index page', function() {
                                 '<button class="submit">Submit</button>' +
                                 '</form>' +
                                 '<div class="score"></div>' +
-                                '<ul class="tweet-stream"></ul>');
+                                '<ul class="tweet-stream"></ul>' +
+                                '<button class="stop-stream">Stop Stream</button>');
         input = fixture.find('input');
         button = fixture.find('button');
-        spyOn(myApp, 'eventSource').and.returnValue({addEventListener: $.noop});
     });
 
     describe('submit button', function() {
@@ -25,14 +25,16 @@ describe('index page', function() {
         });
 
         it("wont send a request if the input box is empty", function() {
+            spyOn(myApp, 'createEventSource');
             input.val('');
             myApp.executeSubmission({preventDefault: $.noop});
-            expect(myApp.eventSource).not.toHaveBeenCalled();
+            expect(myApp.createEventSource).not.toHaveBeenCalled();
         });
 
         it("makes an event source to the proper endpoint", function() {
+            spyOn(myApp, 'createEventSource');
             myApp.executeSubmission({preventDefault: $.noop});
-            expect(myApp.eventSource).toHaveBeenCalledWith('/sentiments/' + value);
+            expect(myApp.createEventSource).toHaveBeenCalledWith('/sentiments/' + value);
         })
 
     });
@@ -81,6 +83,38 @@ describe('index page', function() {
                 myApp.newTweet(eventData);
                 expect($('.tweet-stream li').length).toBe(10);
             });
+        });
+    });
+
+    describe('stop button', function() {
+        const eventData = {data: "{\"score\": 2.5, \"text\": \"Love it\"}"};
+
+        beforeEach(function() {
+            jasmine.Ajax.install();
+        });
+
+        afterEach(function() {
+           jasmine.Ajax.uninstall();
+        });
+
+        it('on click it calls close on the event source', function() {
+            spyOn($, 'ajax');
+            spyOn(myApp.eventSource, 'close');
+            myApp.stopStream();
+            expect(myApp.eventSource.close).toHaveBeenCalled();
+        });
+
+        it('sends a request to /stop_stream', function() {
+            spyOn($, 'ajax');
+            myApp.stopStream();
+            expect($.ajax.calls.first().args[0].url).toBe('/stop_stream');
+        });
+
+        it('it resets the total tweets and score', function() {
+            myApp.newTweet(eventData);
+            expect(myApp.totalScore).toBe(2.5);
+            myApp.stopStream();
+            expect(myApp.totalScore).toBe(0);
         });
     });
 

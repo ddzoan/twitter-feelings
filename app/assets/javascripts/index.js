@@ -2,8 +2,8 @@ myApp = {};
 myApp.successCallback = function (data) {
     console.log('success');
 };
-myApp.eventSource = function(path) {
-    return new EventSource(path);
+myApp.createEventSource = function(path) {
+    myApp.eventSource = new EventSource(path);
 };
 myApp.addTweet = function(tweetData) {
     if($('.tweet-stream li').length === 10) {
@@ -29,15 +29,21 @@ myApp.ajaxParams = {
 myApp.executeSubmission = function (e) {
     e.preventDefault();
     var val = $('input').val();
-
     if(val) {
-        var source = myApp.eventSource('/sentiments/' + val);
-        source.addEventListener('new_tweet', myApp.newTweet);
+        myApp.createEventSource('/sentiments/' + val);
+        myApp.eventSource.addEventListener('new_tweet', myApp.newTweet);
     }
     else {console.log('please enter input');}
 
 };
+myApp.stopStream = function (e) {
+    myApp.eventSource.close();
+    $.ajax({
+        url: '/stop_stream'
+    });
+};
 
 $(function() {
     $('#query').submit(myApp.executeSubmission);
+    $('.stop-stream').click(myApp.stopStream);
 });

@@ -43,4 +43,12 @@ RSpec.describe SentimentsController, type: :controller do
       expect(sse).to have_received(:write).with({text: tweet, score: tweet_score}, event: 'new_tweet')
     end
   end
+
+  describe 'GET stop_stream' do
+    it 'stops the twitter stream' do
+      allow(TwitterStream).to receive(:stop_stream)
+      get :stop_stream
+      expect(TwitterStream).to have_received(:stop_stream)
+    end
+  end
 end
